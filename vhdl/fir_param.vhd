@@ -34,12 +34,12 @@ begin
     
     first_section:
     entity work.mac(behavioral)
-    generic map(input_data_width=>input_data_width)
+    generic map(input_data_width=>input_data_width, SIGNED_UNSIGNED => "signed")
     port map(clk_i=>clk_i,
              u_i=>data_i,
              b_i=>b_s(fir_ord),
-             sec_i=>(others=>'0'),
-             sec_o=>mac_inter(0));
+             prev_block_i=>(others=>'0'),
+             block_o=>mac_inter(0));
                      
     other_sections:
     for i in 1 to fir_ord generate
@@ -49,8 +49,8 @@ begin
         port map(clk_i=>clk_i,
                  u_i=>data_i,
                  b_i=>b_s(fir_ord-i),
-                 sec_i=>mac_inter(i-1),
-                 sec_o=>mac_inter(i));
+                 prev_block_i=>mac_inter(i-1),
+                 block_o=>mac_inter(i));
     end generate;
     
     process(clk_i)
